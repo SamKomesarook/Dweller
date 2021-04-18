@@ -5,14 +5,7 @@ from ariadne.asgi import GraphQL
 # Wrapping string in gql function provides validation and better error traceback
 type_defs = gql("""
     type Query {
-        people: [Person!]!
-    }
-
-    type Person {
-        firstName: String
-        lastName: String
-        age: Int
-        fullName: String
+        status: String
     }
 """)
 
@@ -20,23 +13,12 @@ type_defs = gql("""
 query = QueryType()
 
 # Resolvers are simple python functions
-@query.field("people")
-def resolve_people(*_):
-    return [
-        {"firstName": "John", "lastName": "Doe", "age": 21},
-        {"firstName": "Bob", "lastName": "Boberson", "age": 24},
-    ]
-
-
-# Map resolver functions to custom type fields using ObjectType
-person = ObjectType("Person")
-
-@person.field("fullName")
-def resolve_person_fullname(person, *_):
-    return "%s %s" % (person["firstName"], person["lastName"])
+@query.field("status")
+def resolve_status(*_):
+    return "Okay!"
 
 # Create executable GraphQL schema
-schema = make_executable_schema(type_defs, query, person)
+schema = make_executable_schema(type_defs, query)
 
 # Create an ASGI app using the schema, running in debug mode
 app = GraphQL(schema, debug=True)
